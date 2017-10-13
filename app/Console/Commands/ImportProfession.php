@@ -4,21 +4,21 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
-class ImportGenre extends Command
+class ImportProfession extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'import:genre';
+    protected $signature = 'import:profession';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Imports genres into database.';
+    protected $description = 'Import professions into database';
 
     /**
      * Create a new command instance.
@@ -37,26 +37,25 @@ class ImportGenre extends Command
      */
     public function handle()
     {
-
-        $file= file("data/IMDB-AWS/Movie,Show,Episode/data.tsv");
+        $file= file("data/IMDB-AWS/Person/data.tsv");
         $row = 0;
         $pendingInserts = [];
-        $genres = [];
+        $professions = [];
         foreach ($file as $line){
             $line = trim($line);
             $array = explode("\t", $line);
             if ($row != 0) {
-                $array = explode(",", $array[8]);
-                foreach ($array as $genre) {
-                    if (!in_array($genre, $genres)) {
-                        $genres[] = $genre;
+                $array = explode(",", $array[4]);
+                foreach ($array as $prof) {
+                    if (!in_array($prof, $professions)) {
+                        $professions[] = $prof;
                         $pendingInserts[] = [
-                            'Name' => $genre,
+                            'Name' => $prof,
                         ];
                     }
                 }
                 if($row % 1000 == 0 && $row != 0) {
-                    DB::table('Genre')->insert($pendingInserts);
+                    DB::table('Profession')->insert($pendingInserts);
                     $pendingInserts = [];
                     $this->info("Inserted $row rows.");
                 }
@@ -64,10 +63,10 @@ class ImportGenre extends Command
             $row++;
         }
         if(count($pendingInserts) > 0) {
-            DB::table('Genre')->insert($pendingInserts);
+            DB::table('Profession')->insert($pendingInserts);
             $pendingInserts = [];
             $this->info("Inserted $row rows.");
         }
-        dd($genres);
+        dd($professions);
     }
 }

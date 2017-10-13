@@ -41,6 +41,7 @@ class ImportMovies extends Command
 
         $file = file("data/IMDB-AWS/Movie,Show,Episode/data.tsv");
         $row = 0;
+        $pendingInserts = [];
 
         foreach ($file as $line){
             $line = trim($line);
@@ -57,20 +58,27 @@ class ImportMovies extends Command
                         $Runtime = null;
                     }
 
-                    DB::table('movie')->insert([
+                    $pendingInserts[] = [
                         'Title' => $Title,
                         'Year' => $Year,
                         'Runtime' => $Runtime,
                         'Type' => $Type,
                         'AdultContent' => $AdultContent,
-                    ]);
+                    ];
                 }
-                if ($row % 100 == 0) {
+                if($row % 1000 == 0 && $row != 0) {
+                    DB::table('Movie')->insert($pendingInserts);
+                    $pendingInserts = [];
                     $this->info("Inserted $row rows.");
                 }
             }
 
             $row++;
+        }
+        if(count($pendingInserts) > 0) {
+            DB::table('Movie')->insert($pendingInserts);
+            $pendingInserts = [];
+            $this->info("Inserted $row rows.");
         }
     }
 }
