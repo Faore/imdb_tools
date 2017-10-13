@@ -38,10 +38,9 @@ class ImportPeople extends Command
      */
     public function handle()
     {
-
-
         $file = file("data/IMDB-AWS/Person/data.tsv");
         $row = 0;
+        $pendingInserts = [];
         foreach ($file as $line) {
             $line = trim($line);
             $array = explode("\t", $line);
@@ -55,17 +54,27 @@ class ImportPeople extends Command
                 if($deathYear == '\N') {
                     $deathYear = null;
                 }
-                DB::table('Person')->insert([
+
+                $pendingInserts[] = [
                     'Name' => $name,
                     'BirthDate' => $birthYear,
                     'DeathDate' => $deathYear,
                     'FacebookLikes' => 0
-                ]);
-                if($row % 100 == 0) {
+                ];
+                
+                if($row % 1000 == 0 && $row != 0) {
+                    DB::table('Person')->insert($pendingInserts);
+                    $pendingInserts = [];
                     $this->info("Inserted $row rows.");
                 }
             }
             $row++;
         }
+        if(count($pendingInserts) > 0) {
+            DB::table('Person')->insert($pendingInserts);
+            $pendingInserts = [];
+            $this->info("Inserted $row rows.");
+        }
     }
+
 }
