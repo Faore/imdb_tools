@@ -50,6 +50,9 @@ class ImportTVShow extends Command
                     $Title = $array[2];
                     $StartYear = $array[5];
                     $EndYear = $array[6];
+                    if ($StartYear == '\N') {
+                        $StartYear = null;
+                    }
                     if ($EndYear == '\N') {
                         $EndYear = null;
                     }
@@ -70,7 +73,7 @@ class ImportTVShow extends Command
             $row++;
         }
         if(count($pendingInserts) > 0) {
-            DB::table('TVShows')->insert($pendingInserts);
+            DB::table('TVShow')->insert($pendingInserts);
             $pendingInserts = [];
             $this->info("Inserted $row rows.");
         }
