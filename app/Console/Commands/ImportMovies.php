@@ -39,10 +39,12 @@ class ImportMovies extends Command
     public function handle()
     {
 
-        $file_handle = fopen("data/IMDB-AWS/Movie,Show,Episode/data.tsv", "r");
+        //$file_handle = fopen("data/IMDB-AWS/Movie,Show,Episode/data.tsv", "r");
         $row = 0;
 
-        while (!feof($file_handle)) {
+        $file = file("data/IMDB-AWS/Movie,Show,Episode/data.tsv");
+
+        while (faslse && !feof($file_handle)) {
             $line = trim(fgets($file_handle));
             $array = explode("\t", $line);
 

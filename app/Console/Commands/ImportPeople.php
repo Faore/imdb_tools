@@ -39,12 +39,11 @@ class ImportPeople extends Command
     public function handle()
     {
 
-        //dd(DB::table('Person')->get());
 
-        $file_handle = fopen("data/IMDB-AWS/Person/data.tsv", "r");
+        $file = file("data/IMDB-AWS/Person/data.tsv");
         $row = 0;
-        while (!feof($file_handle)) {
-            $line = trim(fgets($file_handle));
+        foreach ($file as $line) {
+            $line = trim($line);
             $array = explode("\t", $line);
             if($row != 0) {
                 $name = $array[1];
@@ -68,6 +67,5 @@ class ImportPeople extends Command
             }
             $row++;
         }
-        fclose($file_handle);
     }
 }
