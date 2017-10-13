@@ -53,8 +53,8 @@ class ImportMovies extends Command
                     $Year = $array[5];
                     $Runtime = $array[7];
                     $AdultContent = $array[4];
-                    if ($Year == '\N') {
-                        $Year = null;
+                    if ($Runtime == '\N') {
+                        $Runtime = null;
                     }
 
                     DB::table('movie')->insert([
