@@ -39,13 +39,11 @@ class ImportMovies extends Command
     public function handle()
     {
 
-        //$file_handle = fopen("data/IMDB-AWS/Movie,Show,Episode/data.tsv", "r");
+        $file = file("data/IMDB-AWS/Movie,Show,Episode/data.tsv");
         $row = 0;
 
-        $file = file("data/IMDB-AWS/Movie,Show,Episode/data.tsv");
-
-        while (faslse && !feof($file_handle)) {
-            $line = trim(fgets($file_handle));
+        foreach ($file as $line){
+            $line = trim($line);
             $array = explode("\t", $line);
 
             if ($row != 0) {
@@ -55,8 +53,8 @@ class ImportMovies extends Command
                     $Year = $array[5];
                     $Runtime = $array[7];
                     $AdultContent = $array[4];
-                    if ($Year == '\N') {
-                        $Year = null;
+                    if ($Runtime == '\N') {
+                        $Runtime = null;
                     }
 
                     DB::table('movie')->insert([
@@ -74,6 +72,5 @@ class ImportMovies extends Command
 
             $row++;
         }
-        fclose($file_handle);
     }
 }
