@@ -38,20 +38,20 @@ class ImportGenre extends Command
     public function handle()
     {
 
-        $file_handle = fopen("data/IMDB-AWS/Movie,Show,Episode/data.tsv", "r");
+        $file= file("data/IMDB-AWS/Movie,Show,Episode/data.tsv");
         $row = 0;
         $genres = [];
-        while (!feof($file_handle)) {
-            $line = trim(fgets($file_handle));
+        foreach ($file as $line){
+            $line = trim($line);
             $array = explode("\t", $line);
             if ($row != 0) {
                 $array = explode(",", $array[8]);
                 foreach ($array as $genre) {
                     if (!in_array($genre, $genres)) {
                         $genres[] = $genre;
-                        //DB::table('genre')->insert([
-                        //    'Name' => $genre,
-                        //]);
+                        DB::table('genre')->insert([
+                            'Name' => $genre,
+                        ]);
                     }
                 }
                 if($row % 100 == 0) {
@@ -59,7 +59,6 @@ class ImportGenre extends Command
                 }
             }
             $row++;
-            fclose($file_handle);
         }
         dd($genres);
     }
