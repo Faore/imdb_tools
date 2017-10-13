@@ -41,20 +41,23 @@ class ImportMovies extends Command
 
         $file_handle = fopen("data/IMDB-AWS/Movie,Show,Episode/data.tsv", "r");
         $row = 0;
+
         while (!feof($file_handle)) {
             $line = trim(fgets($file_handle));
             $array = explode("\t", $line);
-            if($row != 0) {
-                if($array[1]=='Movie'||$array[1]=='Short'){
+
+            if ($row != 0) {
+                if ($array[1] == 'movie' || $array[1] == 'short') {
                     $Type = $array[1];
                     $Title = $array[2];
                     $Year = $array[5];
                     $Runtime = $array[7];
                     $AdultContent = $array[4];
-                    if($Year == '\N') {
+                    if ($Year == '\N') {
                         $Year = null;
                     }
-                    DB::table('Movie')->insert([
+
+                    DB::table('movie')->insert([
                         'Title' => $Title,
                         'Year' => $Year,
                         'Runtime' => $Runtime,
@@ -62,7 +65,7 @@ class ImportMovies extends Command
                         'AdultContent' => $AdultContent,
                     ]);
                 }
-                if($row % 100 == 0) {
+                if ($row % 100 == 0) {
                     $this->info("Inserted $row rows.");
                 }
             }
