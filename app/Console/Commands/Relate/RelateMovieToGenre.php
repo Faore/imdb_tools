@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Relate;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +30,6 @@ class RelateMovieToGenre extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->currentSpot = 0;
     }
 
     /**
@@ -45,7 +44,6 @@ class RelateMovieToGenre extends Command
         $movies = [];
 
         while(!feof($file)) {
-            //$this->info("$lnum");
             $line = explode("\t", trim(fgets($file)));
             try {
                 $line[8] = explode(",", trim($line[8]));
