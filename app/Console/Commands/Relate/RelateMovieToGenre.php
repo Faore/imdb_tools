@@ -30,7 +30,6 @@ class RelateMovieToGenre extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->currentSpot = 0;
     }
 
     /**
