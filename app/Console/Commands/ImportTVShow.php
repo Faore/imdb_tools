@@ -44,9 +44,8 @@ class ImportTVShow extends Command
         foreach ($file as $line){
             $line = trim($line);
             $array = explode("\t", $line);
-
             if ($row != 0) {
-                if ($array[1] == 'tvSeries') {
+                if ($array[1] == 'tvSeries'||$array[1] == 'tvMiniSeries') {
                     $Title = $array[2];
                     $StartYear = $array[5];
                     $EndYear = $array[6];
@@ -56,7 +55,6 @@ class ImportTVShow extends Command
                     if ($EndYear == '\N') {
                         $EndYear = null;
                     }
-
                     $pendingInserts[] = [
                         'Title' => $Title,
                         'StartYear' => $StartYear,
@@ -69,7 +67,6 @@ class ImportTVShow extends Command
                     $this->info("Inserted $row rows.");
                 }
             }
-
             $row++;
         }
         if(count($pendingInserts) > 0) {
