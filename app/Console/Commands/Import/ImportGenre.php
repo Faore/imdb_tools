@@ -1,24 +1,23 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Import;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-class ImportTVShow extends Command
+class ImportGenre extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'import:tvShow';
+    protected $signature = 'import:genre';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Imports TV Shows into databbase.';
+    protected $description = 'Imports genres into database.';
 
     /**
      * Create a new command instance.
@@ -37,43 +36,34 @@ class ImportTVShow extends Command
      */
     public function handle()
     {
-        $file = file("data/IMDB-AWS/Movie,Show,Episode/data.tsv");
+
+        $file= file("data/IMDB-AWS/Movie,Show,Episode/data.tsv");
         $row = 0;
         $pendingInserts = [];
-
+        $genres = [];
         foreach ($file as $line){
             $line = trim($line);
             $array = explode("\t", $line);
-
             if ($row != 0) {
-                if ($array[1] == 'tvSeries') {
-                    $Title = $array[2];
-                    $StartYear = $array[5];
-                    $EndYear = $array[6];
-                    if ($StartYear == '\N') {
-                        $StartYear = null;
+                $array = explode(",", $array[8]);
+                foreach ($array as $genre) {
+                    if (!in_array($genre, $genres)) {
+                        $genres[] = $genre;
+                        $pendingInserts[] = [
+                            'Name' => $genre
+                        ];
                     }
-                    if ($EndYear == '\N') {
-                        $EndYear = null;
-                    }
-
-                    $pendingInserts[] = [
-                        'Title' => $Title,
-                        'StartYear' => $StartYear,
-                        'EndYear' => $EndYear,
-                    ];
                 }
                 if($row % 1000 == 0 && $row != 0) {
-                    DB::table('TVShow')->insert($pendingInserts);
+                    \DB::table('Genre')->insert($pendingInserts);
                     $pendingInserts = [];
                     $this->info("Inserted $row rows.");
                 }
             }
-
             $row++;
         }
         if(count($pendingInserts) > 0) {
-            DB::table('TVShow')->insert($pendingInserts);
+            \DB::table('Genre')->insert($pendingInserts);
             $pendingInserts = [];
             $this->info("Inserted $row rows.");
         }
