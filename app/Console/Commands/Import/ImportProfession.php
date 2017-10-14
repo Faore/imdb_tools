@@ -47,6 +47,10 @@ class ImportProfession extends Command
             if ($row != 0) {
                 $array = explode(",", $array[4]);
                 foreach ($array as $prof) {
+                     $prof = trim(str_replace('"', '', $prof));
+                     if($prof == '') {
+                         continue;
+                     }
                     if (!in_array($prof, $professions)) {
                         $professions[] = $prof;
                         $pendingInserts[] = [
@@ -57,7 +61,7 @@ class ImportProfession extends Command
                 if($row % 1000 == 0 && $row != 0) {
                     DB::table('Profession')->insert($pendingInserts);
                     $pendingInserts = [];
-                    $this->info("Inserted $row rows.");
+                    $this->info("Processed $row rows.");
                 }
             }
             $row++;
@@ -65,8 +69,7 @@ class ImportProfession extends Command
         if(count($pendingInserts) > 0) {
             DB::table('Profession')->insert($pendingInserts);
             $pendingInserts = [];
-            $this->info("Inserted $row rows.");
+            $this->info("Processes $row rows.");
         }
-        dd($professions);
     }
 }
