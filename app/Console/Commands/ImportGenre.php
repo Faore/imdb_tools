@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 class ImportGenre extends Command
 {
     /**
@@ -51,12 +50,12 @@ class ImportGenre extends Command
                     if (!in_array($genre, $genres)) {
                         $genres[] = $genre;
                         $pendingInserts[] = [
-                            'Name' => $genre,
+                            'Name' => $genre
                         ];
                     }
                 }
                 if($row % 1000 == 0 && $row != 0) {
-                    DB::table('Genre')->insert($pendingInserts);
+                    \DB::table('Genre')->insert($pendingInserts);
                     $pendingInserts = [];
                     $this->info("Inserted $row rows.");
                 }
@@ -64,10 +63,9 @@ class ImportGenre extends Command
             $row++;
         }
         if(count($pendingInserts) > 0) {
-            DB::table('Genre')->insert($pendingInserts);
+            \DB::table('Genre')->insert($pendingInserts);
             $pendingInserts = [];
             $this->info("Inserted $row rows.");
         }
-        dd($genres);
     }
 }

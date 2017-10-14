@@ -48,7 +48,7 @@ class ImportMovies extends Command
             $array = explode("\t", $line);
 
             if ($row != 0) {
-                if ($array[1] == 'movie' || $array[1] == 'short') {
+                if ($array[1] == 'movie' || $array[1] == 'short' || $array[1] == 'tvMovie' || $array[1] == 'video') {
                     $Type = $array[1];
                     $Title = $array[2];
                     $Year = $array[5];
@@ -56,6 +56,9 @@ class ImportMovies extends Command
                     $AdultContent = $array[4];
                     if ($Runtime == '\N') {
                         $Runtime = null;
+                    }
+                    if ($Year == '\N') {
+                        $Year = null;
                     }
 
                     $pendingInserts[] = [
