@@ -32,7 +32,7 @@ class DataReader
     }
 
     public static function getNextRow($file) {
-        $line = explode($file['config']['delimiter'], self::fullTrim(fgets($file['file_pointer'])));
+        $line = str_getcsv(fgets($file['file_pointer']), $file['config']['delimiter'], $file['config']['enclosure'], $file['config']['escape']);
 
         $array = [];
 
