@@ -24,7 +24,7 @@ class DataReader
     }
 
     public static function fullTrim(string $data) {
-        $data = trim($data, " \t\n\r\0\x0BÂ ");
+        $data = trim($data, " \t\n\r\0\x0BÂ† ");
         if($data == "\\N" || $data == '') {
             $data = null;
         }
