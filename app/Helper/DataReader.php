@@ -48,4 +48,8 @@ class DataReader
         }
         return $array;
     }
+
+    public static function endOfFile($file) {
+        return feof($file['file_pointer']);
+    }
 }
