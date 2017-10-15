@@ -52,11 +52,9 @@ class ImportIMDB5000 extends Command
             $actor1 = $row['actor_1_name'];
             $actor2 = $row['actor_2_name'];
             $actor3 = $row['actor_3_name'];
-
-            if($row['title_year']==''){
+            if($row['title_year']==null){
                 continue;
             }
-
             DB::table('Movie')->insert([
                 'Title' => $row['movie_title'],
                 'Year' => $row['title_year'],
