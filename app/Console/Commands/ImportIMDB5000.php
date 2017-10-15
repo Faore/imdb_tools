@@ -70,7 +70,7 @@ class ImportIMDB5000 extends Command
                 'Country' => $row['country'],
                 'ContentRating' => $row['content_rating'],
             ]);
-            $movieId = DB::table('Movie')->where('Title', '=', $row['movie_title'])->first()->id;
+            $movieId = DB::table('Movie')->where('Title', '=', $row['movie_title'])->where('Year', '=', $row['title_year'])->first()->id;
             $db = DB::table('Person')->where('Name', '=',$director)->get();
             if($director !="") {
                 if (count($db) == 0) {
