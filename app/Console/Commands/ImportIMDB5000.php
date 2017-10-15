@@ -74,30 +74,37 @@ class ImportIMDB5000 extends Command
             ]);
             $movieId = DB::table('Movie')->where('Title', '=', $row['movie_title'])->first()->id;
             $db = DB::table('Person')->where('Name', '=',$director)->get();
-            if(count($db)==0) {
-                DB::table('Person')->insert(['Name'=>$director, 'FacebookLikes'=>$row['director_facebook_likes']]);
+            if($director !="") {
+                if (count($db) == 0) {
+                    DB::table('Person')->insert(['Name' => $director, 'FacebookLikes' => $row['director_facebook_likes']]);
+                }
+                $personId = DB::table('Person')->where('Name', '=', $director)->first()->id;
+                DB::table('person_directs_movie')->insert(['Person_id' => $personId, 'Movie_id' => $movieId]);
             }
-            $personId = DB::table('Person')->where('Name', '=',$director)->first()->id;
-            DB::table('person_directs_movie')->insert(['Person_id' => $personId, 'Movie_id'=>$movieId]);
             $db = DB::table('Person')->where('Name', '=',$actor1)->get();
-            if(count($db)==0) {
-                DB::table('Person')->insert(['Name'=>$actor1, 'FacebookLikes'=>$row['actor_1_facebook_likes']]);
+            if($actor1 !="") {
+                if (count($db) == 0) {
+                    DB::table('Person')->insert(['Name' => $actor1, 'FacebookLikes' => $row['actor_1_facebook_likes']]);
+                }
+                $personId = DB::table('Person')->where('Name', '=', $actor1)->first()->id;
+                DB::table('person_acts_for_movie')->insert(['Person_id' => $personId, 'Movie_id' => $movieId]);
             }
-            $personId = DB::table('Person')->where('Name', '=',$actor1)->first()->id;
-            DB::table('person_acts_for_movie')->insert(['Person_id' => $personId, 'Movie_id'=>$movieId]);
             $db = DB::table('Person')->where('Name', '=',$actor2)->get();
-            if(count($db)==0) {
-                DB::table('Person')->insert(['Name'=>$actor2, 'FacebookLikes'=>$row['actor_2_facebook_likes']]);
+            if($actor2 !="") {
+                if (count($db) == 0) {
+                    DB::table('Person')->insert(['Name' => $actor2, 'FacebookLikes' => $row['actor_2_facebook_likes']]);
+                }
+                $personId = DB::table('Person')->where('Name', '=', $actor2)->first()->id;
+                DB::table('person_acts_for_movie')->insert(['Person_id' => $personId, 'Movie_id' => $movieId]);
             }
-            $personId = DB::table('Person')->where('Name', '=',$actor2)->first()->id;
-            DB::table('person_acts_for_movie')->insert(['Person_id' => $personId, 'Movie_id'=>$movieId]);
             $db = DB::table('Person')->where('Name', '=',$actor3)->get();
-            if(count($db)==0) {
-                DB::table('Person')->insert(['Name' => $actor3, 'FacebookLikes' => $row['actor_3_facebook_likes']]);
+            if($actor3 !="") {
+                if (count($db) == 0) {
+                    DB::table('Person')->insert(['Name' => $actor3, 'FacebookLikes' => $row['actor_3_facebook_likes']]);
+                }
+                $personId = DB::table('Person')->where('Name', '=', $actor3)->first()->id;
+                DB::table('person_acts_for_movie')->insert(['Person_id' => $personId, 'Movie_id' => $movieId]);
             }
-            $personId = DB::table('Person')->where('Name', '=',$actor3)->first()->id;
-            DB::table('person_acts_for_movie')->insert(['Person_id' => $personId, 'Movie_id'=>$movieId]);
-
         }
     }
 }
