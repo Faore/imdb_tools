@@ -37,6 +37,6 @@ class ImportIMDB1000 extends Command
      */
     public function handle()
     {
-        //
+        //1000 contains 0:rank 1:Title(R) 2:Genre(R) 3:Description 4:Director(R) 5:Actors 6:Year(R) 7:Runtime (Minutes)(R) 8:Rating 9:Votes(R) 10:Revenue (Millions) 11:Metascore
     }
 }
