@@ -13,8 +13,7 @@ class DataReader
 {
     public static function openDataFile($config) {
         $file = fopen($config['file'], 'r');
-        $headers = self::fullTrim(fgets($file));
-        $headers = explode($config['delimiter'], $headers);
+        $headers = fgetcsv($file, 0, $config['delimiter'], $config['enclosure'], $config['escape']);
         for($i = 0; $i < count($headers); $i++) {
             $headers[$i] = self::fullTrim($headers[$i]);
         }
@@ -26,6 +25,9 @@ class DataReader
         $data = trim($data);
         if(substr($data, -1) == 'Â') {
             $data = substr($data, 0, strlen($data) - 1);
+        }
+        if($data == "\\N") {
+            $data = null;
         }
         return $data;
     }
@@ -41,7 +43,11 @@ class DataReader
 
         //Subarrays
         foreach($file['config']['multivalued'] as $key => $value) {
-            $array[$key] = explode($value, self::fullTrim($array[$key]));
+            if($array[$key] != null) {
+                $array[$key] = explode($value, self::fullTrim($array[$key]));
+            } else {
+                $array[$key] = [];
+            }
             for($i = 0; $i < count($array[$key]); $i++) {
                 $array[$key][$i] = self::fullTrim($array[$key][$i]);
             }
