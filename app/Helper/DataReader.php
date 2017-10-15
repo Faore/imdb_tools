@@ -9,11 +9,13 @@
 namespace App\Helper;
 
 
+use \Exception;
+
 class DataReader
 {
     public static function openDataFile($config) {
         $file = fopen($config['file'], 'r');
-        $headers = fgetcsv($file, 0, $config['delimiter'], $config['enclosure'], $config['escape']);
+        $headers = str_getcsv(fgets($file), $config['delimiter'], $config['enclosure'], $config['escape']);
         for($i = 0; $i < count($headers); $i++) {
             $headers[$i] = self::fullTrim($headers[$i]);
         }
@@ -35,7 +37,12 @@ class DataReader
         $array = [];
 
         for($i = 0; $i < count($line); $i++) {
+            if($i >= count($file['headers'])) {
+                dd("Black Magic Fuckery!!!", $array, $line, $file);
+                break;
+            }
             $array[$file['headers'][$i]] = self::fullTrim($line[$i]);
+
         }
 
         //Subarrays
