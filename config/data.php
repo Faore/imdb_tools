@@ -81,7 +81,7 @@ return [
             'enclosure' => '"',
             'escape' => "\\",
             'multivalued' => [
-                
+
             ]
         ]
 
