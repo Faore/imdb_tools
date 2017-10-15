@@ -2,7 +2,12 @@
 return [
     '5000' => [
         'file' => 'data/IMDB-5000/movie_metadata.csv',
-        'delimiter' => ','
+        'delimiter' => ',',
+        'multivalued' => [
+            'genres' => '|',
+            'plot_keywords' => '|'
+        ]
+
     ],
     '1000' => [
         'file' => 'data/IMDB-1000/IMDB-Movie-Data.csv',
