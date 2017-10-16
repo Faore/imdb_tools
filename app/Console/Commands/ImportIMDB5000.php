@@ -47,7 +47,7 @@ class ImportIMDB5000 extends Command
         // 27:movie_facebook_likes
         while (!DataReader::endOfFile($file)) {
             $row = DataReader::getNextRow($file);
-            if(!array_key_exists('genres')) {
+            if(!array_key_exists('genres', $row)) {
                 continue;
             }
             $director = $row['director_name'];
