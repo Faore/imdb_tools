@@ -44,18 +44,18 @@ class ImportIMDB1000 extends Command
         $file = Datareader::openDataFile($config);
         while (!DataReader::endOfFile($file)) {
             $row = DataReader::getNextRow($file);
-            $movieId = 0;
-            $movieId = DB::table('Movie')->where('Title', '=', $row['Title'])->where('Year', '=', $row['Year'])->where('Rank', '=', null)->first()->id;//find corresponding movie added from 5000 which has not been updated with 1000 data
-            if($movieId!=null){
-                $this->info("updating movie with id $movieId");
-                DB::table('Movie')->where('id', '=', $movieId)->update([
+
+            $movie = DB::table('Movie')->where('Title', '=', $row['Title'])->where('Year', '=', $row['Year'])->first();
+
+            if($movie != null){
+                $this->info("updating movie with id $movie->id");
+                DB::table('Movie')->where('id', '=', $movie->id)->update([
                     'Rank' => $row['Rank'],
                     'Rating'=> $row['Rating'],
                     'Votes'=> $row['Votes'],
                     'Metascore'=>$row['Metascore'],
                     'Revenue'=>$row['Revenue (Millions)'],
                 ]);
-                break;
             }
         }
     }
