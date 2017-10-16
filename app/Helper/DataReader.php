@@ -23,16 +23,32 @@ class DataReader
         return ['file_pointer' => $file, 'config' => $config, 'headers' => $headers];
     }
 
-    public static function fullTrim(string $data) {
-        $data = trim($data, " \t\n\r\0\x0BÂ† ");
+    public static function fullTrim($data) {
+        if($data == null) {
+            return null;
+        }
+        $data = trim(self::RemoveBS($data), " \t\n\r\0\x0BÂ† ");
         if($data == "\\N" || $data == '') {
             $data = null;
         }
         return $data;
     }
 
+    public static function RemoveBS($Str) {
+        $StrArr = str_split($Str); $NewStr = '';
+        foreach ($StrArr as $Char) {
+            $CharNo = ord($Char);
+            if ($CharNo == 163) { $NewStr .= $Char; continue; } // keep £
+            if ($CharNo > 31 && $CharNo < 127) {
+                $NewStr .= $Char;
+            }
+        }
+        return $NewStr;
+    }
+
     public static function getNextRow($file) {
-        $line = str_getcsv(fgets($file['file_pointer']), $file['config']['delimiter'], $file['config']['enclosure'], $file['config']['escape']);
+        $fpd = fgets($file['file_pointer']);
+        $line = str_getcsv($fpd, $file['config']['delimiter'], $file['config']['enclosure'], $file['config']['escape']);
 
         $array = [];
 

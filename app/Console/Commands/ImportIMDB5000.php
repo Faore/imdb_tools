@@ -47,12 +47,21 @@ class ImportIMDB5000 extends Command
         // 27:movie_facebook_likes
         while (!DataReader::endOfFile($file)) {
             $row = DataReader::getNextRow($file);
+            if(!array_key_exists('genres')) {
+                continue;
+            }
             $director = $row['director_name'];
             $genres = $row['genres'];
             $actor1 = $row['actor_1_name'];
             $actor2 = $row['actor_2_name'];
             $actor3 = $row['actor_3_name'];
             if($row['title_year']==null){
+                continue;
+            }
+            $testExists = DB::table('Movie')->where('Title', '=', $row['movie_title'])->where('Year', '=', $row['title_year'])->first();
+            if($testExists != null) {
+                $this->warn("Got more fuckery here. Skipping.");
+                dump($testExists);
                 continue;
             }
             DB::table('Movie')->insert([
@@ -71,16 +80,31 @@ class ImportIMDB5000 extends Command
                 'ContentRating' => $row['content_rating'],
             ]);
             $movieId = DB::table('Movie')->where('Title', '=', $row['movie_title'])->where('Year', '=', $row['title_year'])->first()->id;
+
+            foreach($genres as $genre) {
+                $db = DB::table('Genre')->where('Name', '=', $genre)->first();
+                if($db == null) {
+                    DB::table('Genre')->insert(['Name' => $genre]);
+                    $db = DB::table('Genre')->where('Name', '=', $genre)->first();
+                }
+                DB::table('movie_has_genre')->insert(['Movie_id' => $movieId, 'Genre_id' => $db->id]);
+            }
+
             $db = DB::table('Person')->where('Name', '=',$director)->get();
-            if($director !="") {
+            if($director != null) {
                 if (count($db) == 0) {
                     DB::table('Person')->insert(['Name' => $director, 'FacebookLikes' => $row['director_facebook_likes']]);
                 }
                 $personId = DB::table('Person')->where('Name', '=', $director)->first()->id;
-                DB::table('person_directs_movie')->insert(['Person_id' => $personId, 'Movie_id' => $movieId]);
+                try {
+                    DB::table('person_directs_movie')->insert(['Person_id' => $personId, 'Movie_id' => $movieId]);
+                } catch (\Exception $e) {
+                    dd(DB::table('Movie')->where('Title', '=', $row['movie_title'])->where('Year', '=', $row['title_year'])->get());
+                }
+
             }
             $db = DB::table('Person')->where('Name', '=',$actor1)->get();
-            if($actor1 !="") {
+            if($actor1 != null) {
                 if (count($db) == 0) {
                     DB::table('Person')->insert(['Name' => $actor1, 'FacebookLikes' => $row['actor_1_facebook_likes']]);
                 }
@@ -88,7 +112,7 @@ class ImportIMDB5000 extends Command
                 DB::table('person_acts_for_movie')->insert(['Person_id' => $personId, 'Movie_id' => $movieId]);
             }
             $db = DB::table('Person')->where('Name', '=',$actor2)->get();
-            if($actor2 !="") {
+            if($actor2 != null) {
                 if (count($db) == 0) {
                     DB::table('Person')->insert(['Name' => $actor2, 'FacebookLikes' => $row['actor_2_facebook_likes']]);
                 }
@@ -96,7 +120,7 @@ class ImportIMDB5000 extends Command
                 DB::table('person_acts_for_movie')->insert(['Person_id' => $personId, 'Movie_id' => $movieId]);
             }
             $db = DB::table('Person')->where('Name', '=',$actor3)->get();
-            if($actor3 !="") {
+            if($actor3 != null) {
                 if (count($db) == 0) {
                     DB::table('Person')->insert(['Name' => $actor3, 'FacebookLikes' => $row['actor_3_facebook_likes']]);
                 }
